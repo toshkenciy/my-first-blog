@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.utils import timezone
 from .models import Post
-import sys
- #reload(sys)
-sys.setdefaultencoding('utf-8')
+# import sys
+# reload(sys)
+# sys.setdefaultencoding('utf-8')
 # Create your views here.
 
 def post_list(request):
