@@ -18,6 +18,12 @@ ALLOWED_HOSTS = ['localhost','198.211.99.20', '127.0.0.1', 'toshkenciy.pythonany
 
 LOGIN_REDIRECT_URL = '/'
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'gruzdevasch@gmail.com'
+EMAIL_HOST_PASSWORD = 'Theeliteursa1997'
+EMAIL_PORT = 587
+
 # Application definition
 
 INSTALLED_APPS = [
