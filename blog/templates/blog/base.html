@@ -1,21 +1,27 @@
 {% load staticfiles %}
+{% load bootstrap3 %}
+{% bootstrap_css %}
 <html>
 <head>
   <title>Kilogramm</title>
+
+  <script>UPLOADCARE_PUBLIC_KEY = '41f16e3056403f893c4a'</script>
   <link rel="shortcut icon" href="/main3.jpg" type="image/x-icon">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+  <script charset="utf-8" src="https://ucarecdn.com/libs/widget/3.2.1/uploadcare.full.min.js"></script>
 
 </head>
 <body>
   <div class="page-header">
     {% if user.is_authenticated %}
-       <a href="{% url 'post_draft_list' %}" class="top-menu"><span class="glyphicon glyphicon-edit"></span></a>
+       <a href="{% url 'user_profile' %}" class="top-menu"><span class="glyphicon glyphicon-user"></span></a>
        <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
-       <p class="top-menu">Hello {{ user.username }} <small>(<a href="{% url 'logout' %}">Log out</a>)</small></p>
+       <p class="top-menu">Hello {{ user.username }} </p>
     {% else %}
+
        <a href="{% url 'signup' %}" class="top-menu"><span class="glyphicon glyphicon-pencil"></span></a>
        <a href="{% url 'login' %}" class="top-menu"><span class="glyphicon glyphicon-user"></span></a>
     {% endif %}

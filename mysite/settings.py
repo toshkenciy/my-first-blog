@@ -20,8 +20,8 @@ LOGIN_REDIRECT_URL = '/'
 
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'gruzdevasch@gmail.com'
-EMAIL_HOST_PASSWORD = 'Theeliteursa1997'
+EMAIL_HOST_USER = 'kilogrammteam@gmail.com'
+EMAIL_HOST_PASSWORD = 'f1T2s8fx89Z'
 EMAIL_PORT = 587
 
 # Application definition
@@ -33,6 +33,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'bootstrap3',
     'blog',
 ]
 

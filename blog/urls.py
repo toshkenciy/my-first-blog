@@ -14,5 +14,6 @@ urlpatterns = [
     url(r'^post/(?P<pk>\d+)/publish/$', views.post_publish, name='post_publish'),
     url(r'^comment/(?P<pk>\d+)/approve/$', views.comment_approve, name='comment_approve'),
     url(r'^comment/(?P<pk>\d+)/remove/$', views.comment_remove, name='comment_remove'),
-
+    url(r'^post/(?P<pk>\d+)/addlike/$', views.add_like, name='add_like'),
+    url(r'^profile/$', views.user_profile, name='user_profile'),
 ]
