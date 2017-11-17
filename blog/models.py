@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils import timezone
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class Post(models.Model):
@@ -41,4 +43,13 @@ class Comment(models.Model):
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profpic = models.URLField(default='', blank=True)
-    posts = models.ManyToManyField(Post, related_name='users_posts')
+    subscribers = models.ManyToManyField(User, related_name='subscribers')
+    subscribes = models.ManyToManyField(User, related_name='subscribes')
+    @receiver(post_save, sender=User)
+    def create_user_profile(sender, instance, created, **kwargs):
+       if created:
+          Profile.objects.create(user=instance)
+
+    @receiver(post_save, sender=User)
+    def save_user_profile(sender, instance, **kwargs):
+        instance.profile.save()

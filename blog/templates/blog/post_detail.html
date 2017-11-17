@@ -11,6 +11,7 @@
         {% endif %}
         <div class="name">
         <strong>Автор: {{ post.author }}</strong>
+        <a class="btn btn-default" href="{% url 'subscribe_to_user' pk=post.pk %}">Subscribe</a>
        </div>
         {% if user.is_authenticated %}
              {% if post.author == user or user.is_superuser%}

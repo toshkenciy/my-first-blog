@@ -19,6 +19,7 @@ def post_list(request):
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
+
     return render(request, 'blog/post_detail.html', {'post': post})
 
 @login_required
@@ -68,7 +69,10 @@ def post_remove(request, pk):
 @login_required
 def user_profile(request):
     user = request.user
-    return render(request, 'blog/user_profile.html', {'user': user})
+    profile = Profile.objects.filter(user = user)
+    posts = Post.objects.filter(published_date__lte=timezone.now(), author=user).order_by('-published_date')
+
+    return render(request, 'blog/user_profile.html', {'user': user, 'posts': posts})
 
 @login_required
 def set_user_profile_pic(request, url):
@@ -77,6 +81,19 @@ def set_user_profile_pic(request, url):
     profile_of_user.profpic = url
     profile_of_user.save()
     return render(request, 'blog/user_profile.html', {'user': user})
+
+@login_required
+def subscribe_to_user(request, pk):
+    user = request.user
+    post = get_object_or_404(Post, pk=pk)
+    sub = Profile.objects.filter(user = user)
+    sub_obj = Profile.objects.filter(user = post.author)
+    sub.subscribes.add(sub_obj)
+    sub_obj.subscribers.add(user)
+    dub.save()
+    sub_obj.save()
+    return_path  = request.META.get('HTTP_REFERER','/')
+    return redirect(return_path)
 
 @login_required
 def add_like(request, pk):
@@ -105,6 +122,7 @@ def add_comment_to_post(request, pk):
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = post
+            comment.author = request.user
             comment.save()
             return redirect('post_detail', pk=post.pk)
     else:
@@ -117,6 +135,8 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
+            user.is_superuser = True
+            user.is_staff = True
             user.save()
             current_site = get_current_site(request)
             message = render_to_string('blog/acc_active_email.html', {
