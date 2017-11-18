@@ -2,19 +2,24 @@
 
 {% block content %}
 <div class="profile">
-  {% if user.profile.profpic == '' %}
-     <p><img src="https://ucarecdn.com/e6be98c7-6d8b-4b9b-952e-96dde496ba94/default_profile_picture.png" </p>
+  {% if prof_user.profile.profpic == '' %}
+     <p><img src="https://ucarecdn.com/e6be98c7-6d8b-4b9b-952e-96dde496ba94/default_profile_picture.png" class="img-circle" width="150" height="150"</p>
   {% else %}
-    <p><img src={{profile.profpic}} </p>
+    <p><img src={{profile.profpic}} class="img-circle" </p>
   {% endif %}
   <br/>
-  <input type="hidden" role="uploadcare-uploader" name="https://ucarecdn.com/:uuid/" data-crop="3:4" data-images-only />
-
-  <a class="btn btn-default" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span></a></p>
+  {% if request.user == prof_user %}
+    <input type="hidden" role="uploadcare-uploader" name="content"
+       data-crop="disabled"
+       data-preview-step="true"
+       data-images-only="true" />
+    <br/>
+    <a class="btn btn-default" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span></a></p>
+    <br/>
+  {%endif%}
+  <p>{{posts.count}} публикаций {{prof_user.profile.subscribers.count}} подписчиков  Подписки: {{prof_user.profile.subscribes.count}}</p>
   <br/>
-  <p>{{posts.count}} публикаций {{user.profile.subscribers.count}} подписчиков  Подписки: {{user.profile.subscribes.count}}</p>
-  <br/>
-  <p>Мои публикации: </p>
+  <p>Публикации: </p>
   {% for post in posts %}
   <div class="post">
     <div class="date">

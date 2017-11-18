@@ -4,19 +4,23 @@
 <head>
   <title>Kilogramm</title>
 
-  <script>UPLOADCARE_PUBLIC_KEY = '41f16e3056403f893c4a'</script>
-  <link rel="shortcut icon" href="/main3.jpg" type="image/x-icon">
+  <script>
+  UPLOADCARE_LOCALE = "ru";
+  UPLOADCARE_TABS = "file url facebook gdrive gphotos dropbox instagram evernote flickr skydrive vk";
+  UPLOADCARE_PUBLIC_KEY = "41f16e3056403f893c4a";
+  </script>
+  <script charset="utf-8" src="//ucarecdn.com/libs/widget/3.2.1/uploadcare.full.min.js"></script>
+  <link rel="shortcut icon" href="https://ucarecdn.com/e6be98c7-6d8b-4b9b-952e-96dde496ba94/default_profile_picture.png" type="image/x-icon">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
   <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
   <link rel="stylesheet" href="{% static 'css/blog.css' %}">
-  <script charset="utf-8" src="https://ucarecdn.com/libs/widget/3.2.1/uploadcare.full.min.js"></script>
 
 </head>
 <body>
   <div class="page-header">
     {% if user.is_authenticated %}
-       <a href="{% url 'user_profile' %}" class="top-menu"><span class="glyphicon glyphicon-user"></span></a>
+       <a href="{% url 'user_profile' userp=user.username %}" class="top-menu"><span class="glyphicon glyphicon-user"></span></a>
        <a href="{% url 'post_new' %}" class="top-menu"><span class="glyphicon glyphicon-plus"></span></a>
        <p class="top-menu">Hello {{ user.username }} </p>
     {% else %}

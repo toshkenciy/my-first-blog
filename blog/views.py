@@ -14,12 +14,17 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import login, authenticate
 
 def post_list(request):
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+    user = request.user
+    posts =[]
+    if user.is_authenticated:
+         profile = Profile.objects.filter(user = user)
+         posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     return render(request, 'blog/post_list.html', {'posts': posts})
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
-
+    user = request.user
+    profile = Profile.objects.filter(user = user)
     return render(request, 'blog/post_detail.html', {'post': post})
 
 @login_required
@@ -67,12 +72,12 @@ def post_remove(request, pk):
     return redirect('post_list')
 
 @login_required
-def user_profile(request):
-    user = request.user
-    profile = Profile.objects.filter(user = user)
-    posts = Post.objects.filter(published_date__lte=timezone.now(), author=user).order_by('-published_date')
+def user_profile(request, userp):
+    prof_user = get_object_or_404(User, username=userp)
+    profile = Profile.objects.filter(user = prof_user)
+    posts = Post.objects.filter(published_date__lte=timezone.now(), author=prof_user).order_by('-published_date')
 
-    return render(request, 'blog/user_profile.html', {'user': user, 'posts': posts})
+    return render(request, 'blog/user_profile.html', {'prof_user': prof_user, 'posts': posts})
 
 @login_required
 def set_user_profile_pic(request, url):
@@ -86,12 +91,26 @@ def set_user_profile_pic(request, url):
 def subscribe_to_user(request, pk):
     user = request.user
     post = get_object_or_404(Post, pk=pk)
-    sub = Profile.objects.filter(user = user)
-    sub_obj = Profile.objects.filter(user = post.author)
-    sub.subscribes.add(sub_obj)
-    sub_obj.subscribers.add(user)
-    dub.save()
-    sub_obj.save()
+    aut = post.author
+    user.profile.subscribes.add(aut)
+    user.save()
+
+    aut.profile.subscribers.add(user)
+    aut.save()
+    return_path  = request.META.get('HTTP_REFERER','/')
+    return redirect(return_path)
+
+@login_required
+def unsubscribe_to_user(request, pk):
+    user = request.user
+    post = get_object_or_404(Post, pk=pk)
+    aut = post.author
+
+    user.profile.subscribes.remove(aut)
+    user.save()
+
+    aut.profile.subscribers.remove(user)
+    aut.save()
     return_path  = request.META.get('HTTP_REFERER','/')
     return redirect(return_path)
 
@@ -135,8 +154,7 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
-            user.is_superuser = True
-            user.is_staff = True
+
             user.save()
             current_site = get_current_site(request)
             message = render_to_string('blog/acc_active_email.html', {

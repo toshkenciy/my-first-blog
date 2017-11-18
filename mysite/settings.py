@@ -35,6 +35,13 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blog',
 ]
+UPLOADCARE = {
+    'pub_key': '41f16e3056403f893c4a',
+    'secret': '6e32da15e0cafe65bf3d ',
+    'widget_version': '3.2.1',
+    'widget_build': 'min',
+    'cdn_base': 'https://ucarecdn.com',
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
