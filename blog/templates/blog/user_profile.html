@@ -1,34 +1,75 @@
 {% extends 'blog/base.html' %}
 
+{% load cloudinary %}
 {% block content %}
 <div class="profile">
-  {% if prof_user.profile.profpic == '' %}
-     <p><img src="https://ucarecdn.com/e6be98c7-6d8b-4b9b-952e-96dde496ba94/default_profile_picture.png" class="img-circle" width="150" height="150"</p>
-  {% else %}
-    <p><img src={{profile.profpic}} class="img-circle" </p>
-  {% endif %}
-  <br/>
+  <div class="row">
   {% if request.user == prof_user %}
-    <input type="hidden" role="uploadcare-uploader" name="content"
-       data-crop="disabled"
-       data-preview-step="true"
-       data-images-only="true" />
-    <br/>
+    <p><a href="#avatarmodal" data-toggle="modal"><img src="{{prof_user.profile.profpic.url}}"
+      class="img-circle" width="175" height="175"></a></p>
+  {% else %}
+    <p><img src="{{prof_user.profile.profpic.url}}"
+      class="img-circle" width="175" height="175"></p>
+  {% endif %}
+  <div id="avatarmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Выберите другое изображение профиля</h4>
+        </div>
+        <div class="modal-body">
+
+          {% comment %}
+          <form action="{% url upload_pic %}" method="post" enctype="multipart/form-data">{% csrf_token %}
+            <p>
+               <input id="id_image" type="file" class="" name="image">
+            </p>
+            <input type="submit" value="Submit" />
+          </form>
+          {% endcomment %}
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+
+  </div>
+  </div>
+  <br/>
+  <strong>
+  {{prof_user}}
+  </strong>
+  {% comment %}
+  {% if prof_user != user and user.is_authenticated %}
+      {% if prof_user not in user.profile.subscribes.all%}
+        </br>
+        <a class="btn btn-info" href="{% url 'subscribe_to_user' pk = posts[1].pk %}">Подписаться</a>
+      {% else %}
+        </br>
+        <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' pk = posts[1].pk %}">Отписаться</a>
+      {% endif %}
+  {% endif %}
+  {% endcomment %}
+  {% if request.user == prof_user %}
     <a class="btn btn-default" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span></a></p>
     <br/>
   {%endif%}
   <p>{{posts.count}} публикаций {{prof_user.profile.subscribers.count}} подписчиков  Подписки: {{prof_user.profile.subscribes.count}}</p>
+  </div>
   <br/>
   <p>Публикации: </p>
   {% for post in posts %}
   <div class="post">
+
+    <p>Автор: {{ post.author }}</p>
+    <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-thumbnail" height="300" width="300"></a></h1>
+    <p>{{ post.text|linebreaksbr }}</p>
+    <a href="{% url 'post_detail' pk=post.pk %}">Коментарии: {{ post.comments.count }}</a>
     <div class="date">
       <p>Опубликовано: {{ post.published_date }}</p>
     </div>
-    <p>Автор: {{ post.author }}</p>
-    <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-    <p>{{ post.text|linebreaksbr }}</p>
-    <a href="{% url 'post_detail' pk=post.pk %}">Коментарии: {{ post.comments.count }}</a>
   </div>
   {% endfor %}
 </div>

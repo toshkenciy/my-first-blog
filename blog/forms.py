@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 
 
 class PostForm(forms.ModelForm):
+    image = forms.ImageField()
     class Meta:
         model = Post
-        fields = ('title', 'text',)
+        fields = ('text', 'image')
 
 class CommentForm(forms.ModelForm):
     class Meta:
@@ -20,3 +21,7 @@ class SignupForm(UserCreationForm):
     class Meta:
         model = User
         fields = ('username', 'email', 'password1', 'password2')
+
+class ImageUploadForm(forms.Form):
+    image = forms.ImageField()
+    

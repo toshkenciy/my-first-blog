@@ -2,16 +2,15 @@
 
 {% block content %}
 {% for post in posts %}
-{% if user.profile.subscribes.count > 0 and post.author in user.profile.subscribes.all or not user.is_authenticated or user.profile.subscribes.count == 0 and user.is_authenticated %}
-<div class="post">
+<div class="well">
+
+  <strong><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="50" width="50">  <a href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
+  <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-responsive" height="300" width="300"></a></h1>
+  <p>{{ post.text|linebreaksbr }}</p>
+  <a href="{% url 'post_detail' pk=post.pk %}">Коментарии: {{ post.comments.count }}</a>
   <div class="date">
     <p>Опубликовано: {{ post.published_date }}</p>
   </div>
-  <p>Автор: {{ post.author }}</p>
-  <h1><a href="{% url 'post_detail' pk=post.pk %}">{{ post.title }}</a></h1>
-  <p>{{ post.text|linebreaksbr }}</p>
-  <a href="{% url 'post_detail' pk=post.pk %}">Коментарии: {{ post.comments.count }}</a>
 </div>
-{% endif %}
 {% endfor %}
 {% endblock %}

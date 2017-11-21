@@ -1,9 +1,13 @@
 
 import os
+import cloudinary
+import cloudinary.uploader
+import cloudinary.api
+
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -34,13 +38,12 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'blog',
+    'cloudinary',
 ]
-UPLOADCARE = {
-    'pub_key': '41f16e3056403f893c4a',
-    'secret': '6e32da15e0cafe65bf3d ',
-    'widget_version': '3.2.1',
-    'widget_build': 'min',
-    'cdn_base': 'https://ucarecdn.com',
+cloudinary.config = {
+  'cloud_name': 'dwdm42giw',
+  'api_key': '463589772861675',
+  'api_secret': '8235PzcCcDauKk4BAa0u8VdUFQU',
 }
 
 MIDDLEWARE = [
@@ -123,4 +126,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = 'static'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'

@@ -28,6 +28,9 @@
              <p>{{ post.likedone.count }} отметок "Мне нравится"</p>
         {% endif %}
         <h1>{{ post.title }}</h1>
+        {% if post.postpic %}
+            <p><img src="{{ post.postpic.url }}" class="img-thumbnail" height="300" width="300"</p>
+        {% endif %}
         <p>{{ post.text|linebreaksbr }}</p>
     </div>
     <hr>

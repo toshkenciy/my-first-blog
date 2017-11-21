@@ -12,28 +12,39 @@ from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.core.mail import EmailMessage
 from django.contrib.auth import login, authenticate
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 
 def post_list(request):
     user = request.user
-    posts =[]
-    if user.is_authenticated:
-         profile = Profile.objects.filter(user = user)
-         posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     return render(request, 'blog/post_list.html', {'posts': posts})
+
+def upload_pic(request):
+    if request.method == 'POST':
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = request.user
+            user.profile.profpic = form.cleaned_data['image']
+            user.save()
+            return HttpResponse('image upload success')
+    return HttpResponseForbidden('allowed only via POST')
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     user = request.user
-    profile = Profile.objects.filter(user = user)
+    if user.is_authenticated:
+        profile = Profile.objects.filter(user = user)
     return render(request, 'blog/post_detail.html', {'post': post})
 
 @login_required
 def post_new(request):
     if request.method == "POST":
-        form = PostForm(request.POST)
+        form = PostForm(request.POST, request.FILES)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            post.postpic = form.cleaned_data['image']
             post.save()
             return redirect('post_detail', pk=post.pk)
     else:
@@ -73,6 +84,7 @@ def post_remove(request, pk):
 
 @login_required
 def user_profile(request, userp):
+
     prof_user = get_object_or_404(User, username=userp)
     profile = Profile.objects.filter(user = prof_user)
     posts = Post.objects.filter(published_date__lte=timezone.now(), author=prof_user).order_by('-published_date')
@@ -82,6 +94,7 @@ def user_profile(request, userp):
 @login_required
 def set_user_profile_pic(request, url):
     user = request.user
+    response = upload("pizza.jpg", tags = DEFAULT_TAG)
     profile_of_user = Profile.objects.filter(user = user)
     profile_of_user.profpic = url
     profile_of_user.save()
