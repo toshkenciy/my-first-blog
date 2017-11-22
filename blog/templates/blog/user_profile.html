@@ -2,6 +2,7 @@
 
 {% load cloudinary %}
 {% block content %}
+
 <div class="profile">
   <div class="row">
   {% if request.user == prof_user %}
@@ -30,32 +31,119 @@
       </div>
     </div>
   </div>
+  <div id="subscribesmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Подписки</h4>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <table class="table-responsive">
+              <thead>
+
+              </thead>
+              <tbody>
+                {% if not prof_user.profile.subscribes %}
+                    <t>Подписок нет.</t>
+                {% else %}
+                    {% for subscribes in prof_user.profile.subscribes.all %}
+                    <tr>
+                      <td> <a href="{% url 'user_profile' userp=subscribes.username%}"><img src=" {{ subscribes.profile.profpic.url }} " class="img-circle" height="50" width="50"> </a></td>
+                      <td>{{subscribes.username}}</td>
+                      <td>
+                        {% if subscribes != user and user.is_authenticated %}
+                            {% if subscribes not in user.profile.subscribes.all%}
+                              </br>
+                              <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=subscribes %}">Подписаться</a>
+                            {% else %}
+                              </br>
+                              <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=subscribes %}">Отписаться</a>
+                            {% endif %}
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="subscribersmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Подписчики</h4>
+        </div>
+        <div class="modal-body">
+          <div class="container">
+            <table class="table-responsive">
+              <thead>
+              </thead>
+              <tbody>
+                {% if not prof_user.profile.subscribers %}
+                    <td>Подписчиков нет.</td>
+                {% else %}
+                    {% for subscribers in prof_user.profile.subscribers.all %}
+                    <tr>
+                      <td> <a href="{% url 'user_profile' userp=subscribers.username%}"><img src=" {{ subscribers.profile.profpic.url }} " class="img-circle" height="50" width="50"> </a></td>
+                      <td>{{subscribers.username}}</td>
+                      <td>
+                        {% if subscribers != user and user.is_authenticated %}
+                            {% if subscribers not in user.profile.subscribes.all%}
+                              </br>
+                              <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=subscribers %}">Подписаться</a>
+                            {% else %}
+                              </br>
+                              <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=subscribers %}">Отписаться</a>
+                            {% endif %}
+                        {% endif %}
+                      </td>
+                    </tr>
+                    {% endfor %}
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="modal-footer">
+        </div>
+      </div>
+    </div>
+  </div>
   <br/>
   <strong>
   {{prof_user}}
   </strong>
-  {% comment %}
+
   {% if prof_user != user and user.is_authenticated %}
       {% if prof_user not in user.profile.subscribes.all%}
         </br>
-        <a class="btn btn-info" href="{% url 'subscribe_to_user' pk = posts[1].pk %}">Подписаться</a>
+        <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=prof_user %}">Подписаться</a>
       {% else %}
         </br>
-        <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' pk = posts[1].pk %}">Отписаться</a>
+        <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=prof_user %}">Отписаться</a>
       {% endif %}
   {% endif %}
-  {% endcomment %}
   {% if request.user == prof_user %}
     <a class="btn btn-default" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span></a></p>
     <br/>
   {%endif%}
-  <p>{{posts.count}} публикаций {{prof_user.profile.subscribers.count}} подписчиков  Подписки: {{prof_user.profile.subscribes.count}}</p>
+  <p>{{posts.count}} публикаций <a href="#subscribersmodal" data-toggle="modal" >{{prof_user.profile.subscribers.count}} подписчиков</a>  <a href="#subscribesmodal" data-toggle="modal" >Подписки: {{prof_user.profile.subscribes.count}}</a></p>
   </div>
   <br/>
   <p>Публикации: </p>
   {% for post in posts %}
   <div class="post">
-
     <p>Автор: {{ post.author }}</p>
     <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-thumbnail" height="300" width="300"></a></h1>
     <p>{{ post.text|linebreaksbr }}</p>

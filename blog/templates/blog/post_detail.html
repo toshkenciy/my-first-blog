@@ -9,12 +9,14 @@
         {% endif %}
         <div class="name">
         <strong>Автор: <a href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong>
-        {% if post.author != user and user.is_authenticated and post.author not in user.profile.subscribes.all%}
-            </br>
-            <a class="btn btn-default" href="{% url 'subscribe_to_user' pk=post.pk %}">Подписаться</a>
-        {% elif user.is_authenticated and post.author in user.profile.subscribes.all%}
-            </br>
-            <a class="btn btn-default" href="{% url 'unsubscribe_to_user' pk=post.pk %}">Отписаться</a>
+        {% if post.author != user and user.is_authenticated %}
+            {% if post.author not in user.profile.subscribes.all%}
+              </br>
+              <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=post.author %}">Подписаться</a>
+            {% else %}
+              </br>
+              <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=post.author %}">Отписаться</a>
+            {% endif %}
         {% endif %}
        </div>
         {% if user.is_authenticated %}

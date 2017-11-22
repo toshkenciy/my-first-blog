@@ -4,7 +4,7 @@
     {% if form.errors %}
       <p style="color: red">Имя пользователя и пароль не совпадают. Попробуйте снова.</p>
     {% endif %}
-
+    <div class = "login">
     <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
         <table>
@@ -25,4 +25,5 @@
         <input type="hidden" name="next" value="{{ next }}" />
 
     </form>
+    </div>
 {% endblock %}

@@ -1,6 +1,7 @@
 import os, sys
 from django.utils import timezone
 from .models import Post, Comment, Profile
+from django.contrib.messages import constants as messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm
@@ -89,44 +90,36 @@ def user_profile(request, userp):
             user.profile.profpic.delete()
             user.profile.profpic = form.cleaned_data['image']
             user.profile.save()
-            return HttpResponse('image upload success')
+            return render(request, 'blog/user_profile.html', {'prof_user': prof_user, 'posts': posts, 'form': form})
     else:
         form = ImageUploadForm()
     return render(request, 'blog/user_profile.html', {'prof_user': prof_user, 'posts': posts, 'form': form})
 
-@login_required
-def set_user_profile_pic(request, url):
-    user = request.user
-    response = upload("pizza.jpg", tags = DEFAULT_TAG)
-    profile_of_user = Profile.objects.filter(user = user)
-    profile_of_user.profpic = url
-    profile_of_user.save()
-    return render(request, 'blog/user_profile.html', {'user': user})
 
 @login_required
-def subscribe_to_user(request, pk):
+def subscribe_to_user(request, targetuser):
     user = request.user
-    post = get_object_or_404(Post, pk=pk)
-    aut = post.author
-    user.profile.subscribes.add(aut)
+    neededuser = get_object_or_404(User, username=targetuser)
+    profile = Profile.objects.filter(user = user)
+    user.profile.subscribes.add(neededuser)
     user.save()
 
-    aut.profile.subscribers.add(user)
-    aut.save()
+    neededuser.profile.subscribers.add(user)
+    neededuser.save()
     return_path  = request.META.get('HTTP_REFERER','/')
     return redirect(return_path)
 
 @login_required
-def unsubscribe_to_user(request, pk):
+def unsubscribe_to_user(request, targetuser):
     user = request.user
-    post = get_object_or_404(Post, pk=pk)
-    aut = post.author
+    neededuser = get_object_or_404(User, username=targetuser)
+    profile = Profile.objects.filter(user = user)
 
-    user.profile.subscribes.remove(aut)
+    user.profile.subscribes.remove(neededuser)
     user.save()
 
-    aut.profile.subscribers.remove(user)
-    aut.save()
+    neededuser.profile.subscribers.remove(user)
+    neededuser.save()
     return_path  = request.META.get('HTTP_REFERER','/')
     return redirect(return_path)
 
@@ -202,12 +195,6 @@ def activate(request, uidb64, token):
         return redirect('post_list')
     else:
         return HttpResponse('Activation link is invalid!')
-
-@login_required
-def comment_approve(request, pk):
-    comment = get_object_or_404(Comment, pk=pk)
-    comment.approve()
-    return redirect('post_detail', pk=comment.post.pk)
 
 @login_required
 def comment_remove(request, pk):
