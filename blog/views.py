@@ -1,8 +1,9 @@
+import os, sys
 from django.utils import timezone
 from .models import Post, Comment, Profile
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import PostForm, CommentForm, SignupForm
+from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.utils.encoding import force_bytes, force_text
@@ -14,21 +15,13 @@ from django.core.mail import EmailMessage
 from django.contrib.auth import login, authenticate
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+from cloudinary.api import delete_resources_by_tag, resources_by_tag
+
 
 def post_list(request):
     user = request.user
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     return render(request, 'blog/post_list.html', {'posts': posts})
-
-def upload_pic(request):
-    if request.method == 'POST':
-        form = ImageUploadForm(request.POST, request.FILES)
-        if form.is_valid():
-            user = request.user
-            user.profile.profpic = form.cleaned_data['image']
-            user.save()
-            return HttpResponse('image upload success')
-    return HttpResponseForbidden('allowed only via POST')
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -88,8 +81,18 @@ def user_profile(request, userp):
     prof_user = get_object_or_404(User, username=userp)
     profile = Profile.objects.filter(user = prof_user)
     posts = Post.objects.filter(published_date__lte=timezone.now(), author=prof_user).order_by('-published_date')
-
-    return render(request, 'blog/user_profile.html', {'prof_user': prof_user, 'posts': posts})
+    if request.method == 'POST':
+        form = ImageUploadForm(request.POST, request.FILES)
+        if form.is_valid():
+            user = request.user
+            profile = Profile.objects.filter(user = user)
+            user.profile.profpic.delete()
+            user.profile.profpic = form.cleaned_data['image']
+            user.profile.save()
+            return HttpResponse('image upload success')
+    else:
+        form = ImageUploadForm()
+    return render(request, 'blog/user_profile.html', {'prof_user': prof_user, 'posts': posts, 'form': form})
 
 @login_required
 def set_user_profile_pic(request, url):

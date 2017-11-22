@@ -37,14 +37,20 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'blog',
+    'cloudinary_storage',
     'cloudinary',
+    'blog',
 ]
-cloudinary.config = {
-  'cloud_name': 'dwdm42giw',
-  'api_key': '463589772861675',
-  'api_secret': '8235PzcCcDauKk4BAa0u8VdUFQU',
+
+
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': 'dwdm42giw',
+    'API_KEY': '463589772861675',
+    'API_SECRET': '8235PzcCcDauKk4BAa0u8VdUFQU'
 }
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

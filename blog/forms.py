@@ -1,5 +1,5 @@
 from django import forms
-from .models import Post, Comment
+from .models import Post, Comment, Profile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
@@ -24,4 +24,3 @@ class SignupForm(UserCreationForm):
 
 class ImageUploadForm(forms.Form):
     image = forms.ImageField()
-    

@@ -5,7 +5,7 @@
 <div class="profile">
   <div class="row">
   {% if request.user == prof_user %}
-    <p><a href="#avatarmodal" data-toggle="modal"><img src="{{prof_user.profile.profpic.url}}"
+    <p><a href="#avatarmodal" data-toggle="modal" ><img src="{{prof_user.profile.profpic.url}}"
       class="img-circle" width="175" height="175"></a></p>
   {% else %}
     <p><img src="{{prof_user.profile.profpic.url}}"
@@ -13,7 +13,6 @@
   {% endif %}
   <div id="avatarmodal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
       <!-- Modal content-->
       <div class="modal-content">
         <div class="modal-header">
@@ -21,21 +20,15 @@
           <h4 class="modal-title">Выберите другое изображение профиля</h4>
         </div>
         <div class="modal-body">
-
-          {% comment %}
-          <form action="{% url upload_pic %}" method="post" enctype="multipart/form-data">{% csrf_token %}
-            <p>
-               <input id="id_image" type="file" class="" name="image">
-            </p>
+          <form  method="POST" enctype="multipart/form-data">{% csrf_token %}
+                {{ form.as_p }}
             <input type="submit" value="Submit" />
-          </form>
-          {% endcomment %}
+         </form>
         </div>
         <div class="modal-footer">
         </div>
       </div>
-
-  </div>
+    </div>
   </div>
   <br/>
   <strong>

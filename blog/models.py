@@ -8,7 +8,7 @@ from django.dispatch import receiver
 class Post(models.Model):
     author = models.ForeignKey('auth.User', blank = True)
     text = models.TextField()
-    postpic = models.ImageField(null = True,
+    postpic = models.ImageField(null = True, upload_to = 'postpics/',
         verbose_name=u'Photo')
     created_date = models.DateTimeField(
             default=timezone.now)
@@ -42,11 +42,11 @@ class Comment(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profpic = models.ImageField(blank = True, default='default_profile_picture.png',
+    profpic = models.ImageField(blank = True, upload_to = 'profilepics/', default='default_profile_picture.png',
         verbose_name=u'profoto')
     subscribers = models.ManyToManyField(User, related_name='subscribers', blank = True)
     subscribes = models.ManyToManyField(User, related_name='subscribes', blank = True)
-    description = models.TextField(default = "")
+    description = models.TextField(default = "", blank = True)
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
        if created:
