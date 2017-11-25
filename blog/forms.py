@@ -3,9 +3,8 @@ from .models import Post, Comment, Profile
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 
-
 class PostForm(forms.ModelForm):
-    image = forms.ImageField()
+    image = forms.ImageField(label='Photo')
     class Meta:
         model = Post
         fields = ('text', 'image')

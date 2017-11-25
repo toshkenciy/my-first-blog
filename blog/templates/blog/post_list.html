@@ -1,25 +1,49 @@
 {% extends 'blog/base.html' %}
-
+{% load humanize %}
 {% block content %}
+
+
 {% for post in posts %}
-<div class="well">
 
-  <strong><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="50" width="50">  <a href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
-  <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-responsive" height="300" width="300"></a></h1>
-  <strong>{{ post.author }}</strong>
-  <p>{{ post.text|linebreaksbr }}</p>
-  {% for comment in post.comments.all %}
-  <div class="comment">
-
-    <strong>{{ comment.author }}</strong>
-    <p>{{ comment.text|linebreaks }}</p>
-  </div>
-  {% empty %}
-      <p>Комментариев пока нет.</p>
-  {% endfor %}
-  <div class="date">
-    <p>Опубликовано: {{ post.published_date }}</p>
+<div class="col-md-7">
+  <div class="wel">
+    <strong class="posttopline"><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35">  <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
+    <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-responsive postpic"   ></a></h1>
+    <ul>
+      {% if user in post.likedone.all %}
+        <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
+        <span class="glyphicon glyphicon-heart" style="color:darkred;font-size:2em;"></span></a>
+      {% else %}
+        <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
+        <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></a>
+      {% endif %}
+      </br>
+      <strong class="likesdone">{{ post.likedone.count }} отметок "Нравится"</strong>
+      <li class="r">
+        <a class="nontranslate" title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a>
+        <span>{{ post.text|linebreaksbr }}</span>
+      </li>
+      {% for comment in post.comments.all %}
+      <li class="r" >
+        <a class="nontranslate" title="{{comment.author}}" href="{% url 'user_profile' userp=comment.author%}">{{ comment.author }}</a>
+        <span>{{ comment.text }}</span>
+        {% if user.is_authenticated and comment.author == user.username%}
+            <a class="btn delcbut" data-toggle="tooltip" title="Удалить коментарий" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></a>
+        {% endif %}
+      </li>
+      {% empty %}
+          <p class="nocoms">Комментариев пока нет.</p>
+      {% endfor %}
+      <time class="date" datetime="{{post.published_date}}" title="{{post.published_date}}">
+        {{ post.published_date|naturaltime }}
+      </time>
+      <br></br>
+      {% if user.is_authenticated %}
+           <a class="btn btn-default " href="{% url 'add_comment_to_post' pk=post.pk %}">Добавить комментарий</a>
+      {% endif %}
+    </ul>
   </div>
 </div>
+
 {% endfor %}
 {% endblock %}

@@ -25,7 +25,7 @@ class Post(models.Model):
 
 class Comment(models.Model):
     post = models.ForeignKey('blog.Post', related_name='comments')
-    author = models.OneToOneField(User, on_delete=models.CASCADE)
+    author = models.CharField(max_length=50, default="")
     text = models.TextField()
     created_date = models.DateTimeField(default=timezone.now)
     approved_comment = models.BooleanField(default=True)
@@ -45,6 +45,7 @@ class Profile(models.Model):
     subscribers = models.ManyToManyField(User, related_name='subscribers', blank = True)
     subscribes = models.ManyToManyField(User, related_name='subscribes', blank = True)
     description = models.TextField(default = "", blank = True)
+
     @receiver(post_save, sender=User)
     def create_user_profile(sender, instance, created, **kwargs):
        if created:
@@ -53,3 +54,6 @@ class Profile(models.Model):
     @receiver(post_save, sender=User)
     def save_user_profile(sender, instance, **kwargs):
         instance.profile.save()
+
+    def __str__(self):
+        return self.user.username

@@ -8,7 +8,7 @@
             </div>
         {% endif %}
         <div class="name">
-        <strong>Автор: <a href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong>
+        <strong><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35">  <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
         {% if post.author != user and user.is_authenticated %}
             {% if post.author not in user.profile.subscribes.all%}
               </br>
@@ -26,8 +26,14 @@
                  <a class="btn btn-default" href="{% url 'post_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
              </div>
              {% endif %}
-             <a class="btn btn-default btn-lg" href="{% url 'add_like' pk=post.pk %}"><span class="glyphicon glyphicon-heart"></span></a>
-             <p>{{ post.likedone.count }} отметок "Мне нравится"</p>
+             {% if user in post.likedone.all %}
+               <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
+               <span class="glyphicon glyphicon-heart" style="color:darkred;font-size:2em;"></span></a>
+             {% else %}
+               <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
+               <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></a>
+             {% endif %}
+             <strong>{{ post.likedone.count }} отметок "Нравится"</strong>
         {% endif %}
         <h1>{{ post.title }}</h1>
         {% if post.postpic %}

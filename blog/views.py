@@ -6,7 +6,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
@@ -22,6 +22,7 @@ from cloudinary.api import delete_resources_by_tag, resources_by_tag
 def post_list(request):
     user = request.user
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+
     return render(request, 'blog/post_list.html', {'posts': posts})
 
 def post_detail(request, pk):
@@ -138,21 +139,20 @@ def add_like(request, pk):
                 post.likes -= 1
             post.likedone.remove(current_user)
             post.save()
-
-    return_path  = request.META.get('HTTP_REFERER','/')
-    return redirect(return_path)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '#'+pk))
 
 @login_required
 def add_comment_to_post(request, pk):
     post = get_object_or_404(Post, pk=pk)
+    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     if request.method == "POST":
         form = CommentForm(request.POST)
         if form.is_valid():
             comment = form.save(commit=False)
             comment.post = post
-            comment.author = request.user
+            comment.author = request.user.username
             comment.save()
-            return redirect('post_detail', pk=post.pk)
+            return render(request, 'blog/post_list.html', {'posts': posts})
     else:
         form = CommentForm()
     return render(request, 'blog/add_comment_to_post.html', {'form': form})
@@ -200,4 +200,4 @@ def activate(request, uidb64, token):
 def comment_remove(request, pk):
     comment = get_object_or_404(Comment, pk=pk)
     comment.delete()
-    return redirect('post_detail', pk=comment.post.pk)
+    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

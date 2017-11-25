@@ -5,6 +5,9 @@
 
 <div class="profile">
   <div class="row">
+  <div class="col-md-2">
+  </div>
+    <div class="col-md-3">
   {% if request.user == prof_user %}
     <p><a href="#avatarmodal" data-toggle="modal" ><img src="{{prof_user.profile.profpic.url}}"
       class="img-circle" width="175" height="175"></a></p>
@@ -12,6 +15,7 @@
     <p><img src="{{prof_user.profile.profpic.url}}"
       class="img-circle" width="175" height="175"></p>
   {% endif %}
+</div>
   <div id="avatarmodal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
@@ -23,7 +27,7 @@
         <div class="modal-body">
           <form  method="POST" enctype="multipart/form-data">{% csrf_token %}
                 {{ form.as_p }}
-            <input type="submit" value="Submit" />
+          <input type="submit" value="Принять" />
          </form>
         </div>
         <div class="modal-footer">
@@ -40,8 +44,8 @@
           <h4 class="modal-title">Подписки</h4>
         </div>
         <div class="modal-body">
-          <div class="container">
-            <table class="table-responsive">
+          <div class="table-responsive">
+            <table class="table">
               <thead>
 
               </thead>
@@ -51,16 +55,16 @@
                 {% else %}
                     {% for subscribes in prof_user.profile.subscribes.all %}
                     <tr>
-                      <td> <a href="{% url 'user_profile' userp=subscribes.username%}"><img src=" {{ subscribes.profile.profpic.url }} " class="img-circle" height="50" width="50"> </a></td>
-                      <td>{{subscribes.username}}</td>
+                      <td scope="row"> <a href="{% url 'user_profile' userp=subscribes.username%}"><img src=" {{ subscribes.profile.profpic.url }} " class="img-circle" height="35" width="35"> </a></td>
+                      <td><a href="{% url 'user_profile' userp=subscribes.username%}"><strong>{{subscribes.username}}</strong> </a></td>
                       <td>
                         {% if subscribes != user and user.is_authenticated %}
                             {% if subscribes not in user.profile.subscribes.all%}
                               </br>
-                              <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=subscribes %}">Подписаться</a>
+                              <a class="btn btn-info subtn" href="{% url 'subscribe_to_user' targetuser=subscribes %}">Подписаться</a>
                             {% else %}
                               </br>
-                              <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=subscribes %}">Отписаться</a>
+                              <a class="btn btn-danger subtn" href="{% url 'unsubscribe_to_user' targetuser=subscribes %}">Отписаться</a>
                             {% endif %}
                         {% endif %}
                       </td>
@@ -70,8 +74,6 @@
               </tbody>
             </table>
           </div>
-        </div>
-        <div class="modal-footer">
         </div>
       </div>
     </div>
@@ -85,8 +87,8 @@
           <h4 class="modal-title">Подписчики</h4>
         </div>
         <div class="modal-body">
-          <div class="container">
-            <table class="table-responsive">
+          <div class="table-responsive">
+            <table class="table">
               <thead>
               </thead>
               <tbody>
@@ -95,16 +97,16 @@
                 {% else %}
                     {% for subscribers in prof_user.profile.subscribers.all %}
                     <tr>
-                      <td> <a href="{% url 'user_profile' userp=subscribers.username%}"><img src=" {{ subscribers.profile.profpic.url }} " class="img-circle" height="50" width="50"> </a></td>
-                      <td>{{subscribers.username}}</td>
+                      <td scope="row"> <a href="{% url 'user_profile' userp=subscribers.username%}"><img src=" {{ subscribers.profile.profpic.url }} " class="img-circle" height="35" width="35"> </a></td>
+                      <td><a href="{% url 'user_profile' userp=subscribers.username%}"> <strong>{{subscribers.username}}</strong></a></td>
                       <td>
                         {% if subscribers != user and user.is_authenticated %}
                             {% if subscribers not in user.profile.subscribes.all%}
                               </br>
-                              <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=subscribers %}">Подписаться</a>
+                              <a class="btn btn-info subtn" href="{% url 'subscribe_to_user' targetuser=subscribers %}">Подписаться</a>
                             {% else %}
                               </br>
-                              <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=subscribers %}">Отписаться</a>
+                              <a class="btn btn-danger subtn" href="{% url 'unsubscribe_to_user' targetuser=subscribers %}">Отписаться</a>
                             {% endif %}
                         {% endif %}
                       </td>
@@ -115,13 +117,12 @@
             </table>
           </div>
         </div>
-        <div class="modal-footer">
-        </div>
       </div>
     </div>
   </div>
   <br/>
-  <strong>
+  <div class="col-md-4">
+  <strong class="profusername">
   {{prof_user}}
   </strong>
 
@@ -138,20 +139,33 @@
     <a class="btn btn-default" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span></a></p>
     <br/>
   {%endif%}
-  <p>{{posts.count}} публикаций <a href="#subscribersmodal" data-toggle="modal" >{{prof_user.profile.subscribers.count}} подписчиков</a>  <a href="#subscribesmodal" data-toggle="modal" >Подписки: {{prof_user.profile.subscribes.count}}</a></p>
+  <p class="infoline"><strong>{{posts.count}}</strong> публикаций
+    <a href="#subscribersmodal" data-toggle="modal" ><strong>{{prof_user.profile.subscribers.count}}</strong> подписчиков</a>
+    <a href="#subscribesmodal" data-toggle="modal" >   Подписки: <strong>{{prof_user.profile.subscribes.count}}</strong></a></p>
+  </div>
   </div>
   <br/>
-  <p>Публикации: </p>
-  {% for post in posts %}
-  <div class="post">
-    <p>Автор: {{ post.author }}</p>
-    <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-thumbnail" height="300" width="300"></a></h1>
-    <p>{{ post.text|linebreaksbr }}</p>
-    <a href="{% url 'post_detail' pk=post.pk %}">Коментарии: {{ post.comments.count }}</a>
-    <div class="date">
-      <p>Опубликовано: {{ post.published_date }}</p>
+
+  <t class="pubhead">ПУБЛИКАЦИИ</t>
+<br></br>
+  <div class="profile_posts row" >
+    {% for post in posts %}
+    <div class="profile_post col-md-4" >
+      <a href="{% url 'post_detail' pk=post.pk %}">
+      <div class="middle">
+          <div class="posttext">
+            <span class="glyphicon glyphicon-heart"style="color:black;"></span>
+              {{post.likedone.count}}</br>
+            <span class="glyphicon glyphicon-comment"style="color:black;"></span>
+              {{post.comments.count}}
+          </div>
+      </div>
+      <div class="profile_post_pic">
+      <img src="{{ post.postpic.url }}" >
     </div>
+      </a>
+    </div>
+    {% endfor %}
   </div>
-  {% endfor %}
 </div>
 {% endblock %}
