@@ -39,7 +39,7 @@ class Comment(models.Model):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    profpic = models.ImageField(blank = True, upload_to = 'profilepics/', default='default_profile_picture.png',
+    profpic = models.ImageField(blank = True, upload_to = 'profilepics/', default='http://res.cloudinary.com/dwdm42giw/image/upload/v1511185812/default_profile_picture_kocxfz.png',
         verbose_name=u'profoto')
     subscribers = models.ManyToManyField(User, related_name='subscribers', blank = True)
     subscribes = models.ManyToManyField(User, related_name='subscribes', blank = True)
