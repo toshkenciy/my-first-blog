@@ -47,18 +47,7 @@ h1, h2, h3, h4 {
     width: 100%;
 }
 
-.profile_posts{
-    width: 100%;
-    position: relative;
 
-    justify-content: center;
-}
-
-.profile_post {
-    position: relative;
-    max-width: 280px;
-
-}
 
 .middle {
   transition: .5s ease;
@@ -86,9 +75,17 @@ h1, h2, h3, h4 {
 }
 
 .post, .postedit {
-    margin-left: 50px;
-    margin-top: 50px;
-    margin-bottom: 70px;
+     border-radius: 0;
+     margin-top: 50px;
+     margin-bottom: 50px;
+     border: 1px #DCDCDC;
+     border-style: groove;
+     position: relative;
+     max-width: 100%;
+     width: 100%;
+     background: White;
+     overflow: hidden;
+     display: block;
 }
 
 .pubhead{
@@ -98,6 +95,19 @@ h1, h2, h3, h4 {
 }
 .infoline{
   font-size: 16px;
+}
+
+.profile_posts{
+    width: 100%;
+    position: relative;
+
+    justify-content: center;
+}
+
+.profile_post {
+    position: relative;
+    max-width: 280px;
+
 }
 .profile_post_pic{
     margin-right: 30px;
@@ -127,9 +137,15 @@ h1, h2, h3, h4 {
 .profusername{
   font-size: 22px;
 }
+.piccol{
 
-.postpic{
-  width: 100%;
+}
+.piccol img{
+  width:100%;
+  height: auto;
+  border: none;
+  margin: 0;
+  padding: 0;
 }
 
 .posttopline{
@@ -203,7 +219,7 @@ a:link,  a:visited, a:hover      {color:#000;text-decoration: none;}
 
 }
 .dropdown {
-
+    width: auto;
     position: relative;
     display: inline-block;
 }
@@ -217,6 +233,7 @@ a:link,  a:visited, a:hover      {color:#000;text-decoration: none;}
 
 .middlesearch, .dropdown, .dropdown-menu{
   height:auto;
+  width: auto;
   margin-top: 5px;
   overflow: hidden;
   position: relative;

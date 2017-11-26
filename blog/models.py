@@ -37,7 +37,6 @@ class Comment(models.Model):
     def __str__(self):
         return self.text
 
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     profpic = models.ImageField(blank = True, upload_to = 'profilepics/', default='default_profile_picture.png',

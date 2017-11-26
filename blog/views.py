@@ -4,7 +4,7 @@ from .models import Post, Comment, Profile
 from django.contrib.messages import constants as messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404, redirect
-from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm
+from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm, UserEditForm
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.encoding import force_bytes, force_text
@@ -22,8 +22,8 @@ from cloudinary.api import delete_resources_by_tag, resources_by_tag
 def post_list(request):
     user = request.user
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
-
-    return render(request, 'blog/post_list.html', {'posts': posts})
+    users = User.objects.all()
+    return render(request, 'blog/post_list.html', {'posts': posts, 'users':users})
 
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
@@ -45,6 +45,27 @@ def post_new(request):
     else:
         form = PostForm()
     return render(request, 'blog/post_edit.html', {'form': form})
+
+@login_required
+def user_edit(request):
+    if request.method == 'POST':
+        form = UserEditForm(request.POST,  request.FILES)
+        if form.is_valid():
+            user = request.user
+            profile = Profile.objects.filter(user = user)
+            if form.cleaned_data['image']:
+               user.profile.profpic.delete()
+               user.profile.profpic = form.cleaned_data['image']
+            if form.cleaned_data['description']:
+               user.profile.description = form.cleaned_data['description']
+            if form.cleaned_data['first_name']:
+               user.first_name = form.cleaned_data['first_name']
+            user.save()
+            user.profile.save()
+            return redirect('user_profile', userp=user.username)
+    else:
+        form = UserEditForm()
+    return render(request, 'blog/user_edit.html', {'form': form})
 
 @login_required
 def post_edit(request, pk):

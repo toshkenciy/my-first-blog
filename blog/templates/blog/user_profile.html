@@ -15,7 +15,7 @@
     <p><img src="{{prof_user.profile.profpic.url}}"
       class="img-circle" width="175" height="175"></p>
   {% endif %}
-</div>
+    </div>
   <div id="avatarmodal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
@@ -136,12 +136,14 @@
       {% endif %}
   {% endif %}
   {% if request.user == prof_user %}
-    <a class="btn btn-default" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"></span></a></p>
-    <br/>
+    <a data-toggle="tooltip" title="Настройки профиля" href="{% url 'user_edit' %}"><span class="glyphicon glyphicon-cog"style="font-size:1.5em;"></span></a>
+    <a data-toggle="tooltip" title="Выйти из учетной записи" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"style="font-size:1.5em;"></span></a>
+    <br></br>
   {%endif%}
   <p class="infoline"><strong>{{posts.count}}</strong> публикаций
     <a href="#subscribersmodal" data-toggle="modal" ><strong>{{prof_user.profile.subscribers.count}}</strong> подписчиков</a>
     <a href="#subscribesmodal" data-toggle="modal" >   Подписки: <strong>{{prof_user.profile.subscribes.count}}</strong></a></p>
+  <p><strong>{{prof_user.get_short_name}}</strong>   {{prof_user.profile.description}}</p>
   </div>
   </div>
   <br/>
