@@ -14,7 +14,6 @@ class Post(models.Model):
             default=timezone.now)
     published_date = models.DateTimeField(
             default=timezone.now)
-    likes = models.IntegerField(verbose_name='Like', default=0)
     likedone = models.ManyToManyField(User, related_name='users_likes', blank = True)
     def publish(self):
         self.published_date = timezone.now()

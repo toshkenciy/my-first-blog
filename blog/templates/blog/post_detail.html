@@ -31,35 +31,36 @@
              </div>
              {% endif %}
              {% if user in post.likedone.all %}
-               <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
-               <span class="glyphicon glyphicon-heart" style="color:darkred;font-size:2em;"></span></a>
+               <button class="likebut" type="button" data-postpk="{{post.pk}}">
+               <span class="glyphicon glyphicon-heart" style="font-size:2em;"></span></button>
              {% else %}
-               <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
-               <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></a>
+               <button class="likebut" type="button" data-postpk="{{post.pk}}">
+               <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></button>
              {% endif %}
-             <strong>{{ post.likedone.count }} отметок "Нравится"</strong>
+             </br>
+             <t><strong class="likesdone" id="{{post.pk}}">{{ post.likedone.count }} </strong><strong> отметок "Нравится"</strong></t>
         {% endif %}
-
-        <p>{{ post.text|linebreaksbr }}</p>
+        <br></br>
+        <t>
+          <a class="nontranslate" title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a>
+          <span>{{ post.text|linebreaksbr }}</span>
+        </t>
+        <br></br>
     </div>
     <hr>
-{% if user.is_authenticated %}
-     <a class="btn btn-default " href="{% url 'add_comment_to_post' pk=post.pk %}">Добавить комментарий</a>
-{% endif %}
 {% for comment in post.comments.all %}
 <div class="comment">
 
-  <strong>{{ comment.author }}</strong>
-  <p>{{ comment.text|linebreaks }}
+  <a class="nontranslate" title="{{comment.author}}" href="{% url 'user_profile' userp=comment.author%}">{{ comment.author }}</a>
+  <span>{{ comment.text }}</span>
   {% if user.is_authenticated and comment.author == user.username%}
-      <a  href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
+      <a class="btn delcbut" data-toggle="tooltip" title="Удалить коментарий" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></a>
   {% endif %}
-  </p>
 </div>
 {% empty %}
     <p>Комментариев пока нет.</p>
 {% endfor %}
-
+<br></br>
 <time class="date" style="margin-left:10px; "datetime="{{post.published_date}}" title="{{post.published_date}}">
   {{ post.published_date|naturaltime }}
 </time>

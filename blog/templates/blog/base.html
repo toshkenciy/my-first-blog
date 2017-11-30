@@ -12,11 +12,67 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <!-- jQuery library -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-
 <!-- Latest compiled JavaScript -->
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{% static 'css/blog.css' %}">
+  <script>
+  $(document).ready(function(){
+    $('.likebut').on("click", function(){
+      var postpk;
+      postpk = $(this).attr("data-postpk");
+      $("span", this).toggleClass("glyphicon-heart glyphicon-heart-empty");
+      $.get('/add_like/', {pk: postpk}, function(data){
+        $('#'+postpk).html(data);
+      });
+    });
+    $('.delcbut').on("click", function(){
+      var postpk, commentpk;
+      postpk = $(this).attr("data-postpk");
+      commentpk = $(this).attr("data-commentpk");
+      $.get('/comment/remove/', {pk: commentpk}, function(){
+        $('#comments'+commentpk).remove();
+      });
+    });
+  function getCookie(c_name)
+   {
+       if (document.cookie.length > 0)
+       {
+           c_start = document.cookie.indexOf(c_name + "=");
+           if (c_start != -1)
+           {
+               c_start = c_start + c_name.length + 1;
+               c_end = document.cookie.indexOf(";", c_start);
+               if (c_end == -1) c_end = document.cookie.length;
+               return unescape(document.cookie.substring(c_start,c_end));
+           }
+       }
+       return "";
+    }
+  $('.commentform').submit(function(event) {
+      event.preventDefault();
+      var postpk, commenttext, lastcom;
+      postpk = $(this).attr('data-postpk');
+      commenttext = $(this).find('.commentinput').val();
+      lastcom = $('.ul').find('.r').last();
+      console.log(postpk, commenttext);
+      $.ajax({
+          headers: { "X-CSRFToken": getCookie("csrftoken") },
+          type: 'POST',
+          url: '/post/comment/',
+          dataType: 'JSON',
+          data: { pk: postpk, the_comment: commenttext},
+          success: function (data) {
+              $(this).closest('form').find("input[type=text], textarea").val("");
+              $('.r').last().after("<t><strong>"+data.author+"</strong>  <t> "+data.text+"</t></t></br>"
+            );
+          },
+    });
+  });
+
+});
+  </script>
+
   <script>
   $(document).ready(function(){
     $("#myInput").on("keyup", function() {
@@ -73,5 +129,6 @@
       </div>
     </div>
   </div>
+
 </body>
 </html>

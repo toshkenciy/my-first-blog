@@ -1,30 +1,36 @@
 import os, sys
 from django.utils import timezone
 from .models import Post, Comment, Profile
+import json
 from django.contrib.messages import constants as messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm, UserEditForm
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.utils.encoding import force_bytes, force_text
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.template.loader import render_to_string
 from .tokens import account_activation_token
 from django.contrib.auth.models import User
+from django.template import RequestContext
 from django.core.mail import EmailMessage
 from django.contrib.auth import login, authenticate
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
 from cloudinary.api import delete_resources_by_tag, resources_by_tag
+from django.views.generic import RedirectView
 
 
+@login_required
 def post_list(request):
     user = request.user
     posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
     users = User.objects.all()
     return render(request, 'blog/post_list.html', {'posts': posts, 'users':users})
 
+
+@login_required
 def post_detail(request, pk):
     post = get_object_or_404(Post, pk=pk)
     user = request.user
@@ -98,7 +104,6 @@ def post_remove(request, pk):
     post.delete()
     return redirect('post_list')
 
-@login_required
 def user_profile(request, userp):
 
     prof_user = get_object_or_404(User, username=userp)
@@ -146,37 +151,44 @@ def unsubscribe_to_user(request, targetuser):
     return redirect(return_path)
 
 @login_required
-def add_like(request, pk):
-    user_tags = User.objects.filter(users_likes = pk)
+def add_like(request):
+    pk = None
+    if request.method == 'GET':
+        pk = request.GET['pk']
+
+    post = get_object_or_404(Post, pk=pk)
     current_user = request.user
-    if current_user not in user_tags:
-            post = get_object_or_404(Post, pk=pk)
-            post.likes += 1
-            post.save()
+    if current_user not in post.likedone.all():
             post.likedone.add(current_user)
+            post.save()
     else:
-            post = get_object_or_404(Post, pk=pk)
-            if post.likes > 0:
-                post.likes -= 1
             post.likedone.remove(current_user)
             post.save()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '#'+pk))
+    return HttpResponse(post.likedone.count())
+
 
 @login_required
-def add_comment_to_post(request, pk):
-    post = get_object_or_404(Post, pk=pk)
-    posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+def add_comment_to_post(request):
     if request.method == "POST":
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.post = post
-            comment.author = request.user.username
-            comment.save()
-            return render(request, 'blog/post_list.html', {'posts': posts})
-    else:
-        form = CommentForm()
-    return render(request, 'blog/add_comment_to_post.html', {'form': form})
+        pk = request.POST.get('pk')
+        post = get_object_or_404(Post, pk=pk)
+        posts = Post.objects.filter(published_date__lte=timezone.now()).order_by('-published_date')
+        comment_text = request.POST.get('the_comment')
+        response_data = {}
+
+        comment = Comment(text=comment_text, author=request.user.username, post=post)
+        comment.save()
+
+        response_data['author'] = request.user.username
+        response_data['postpk'] = post.pk
+        response_data['text'] = comment.text
+        response_data['pk'] = comment.pk
+
+        return HttpResponse(
+            json.dumps(response_data),
+            content_type="application/json",
+        )
+    return render(request, 'blog/post_list.html', {'posts': posts})
 
 def signup(request):
     if request.method == 'POST':
@@ -218,7 +230,10 @@ def activate(request, uidb64, token):
         return HttpResponse('Activation link is invalid!')
 
 @login_required
-def comment_remove(request, pk):
+def comment_remove(request):
+    pk = None
+    if request.method == 'GET':
+        pk = request.GET['pk']
     comment = get_object_or_404(Comment, pk=pk)
     comment.delete()
-    return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+    return HttpResponse()

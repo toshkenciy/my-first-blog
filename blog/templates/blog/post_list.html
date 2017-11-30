@@ -4,31 +4,32 @@
 
 
 {% for post in posts %}
-
 <div class="col-md-7">
   <div class="wel">
     <strong class="posttopline"><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35">  <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
     <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-responsive postpic"   ></a></h1>
     <ul>
       {% if user in post.likedone.all %}
-        <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
-        <span class="glyphicon glyphicon-heart" style="color:darkred;font-size:2em;"></span></a>
+        <button class="likebut" type="button" data-postpk="{{post.pk}}">
+        <span class="glyphicon glyphicon-heart" style="font-size:2em;"></span></button>
       {% else %}
-        <a class="likebut" role="button" aria-disabled="false" href="{% url 'add_like' pk=post.pk %}">
-        <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></a>
+        <button class="likebut" type="button" data-postpk="{{post.pk}}">
+        <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></button>
       {% endif %}
       </br>
-      <strong class="likesdone">{{ post.likedone.count }} отметок "Нравится"</strong>
+      <t><strong class="likesdone" id="{{post.pk}}">{{ post.likedone.count }} </strong><strong> отметок "Нравится"</strong></t>
       <li class="r">
         <a class="nontranslate" title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a>
         <span>{{ post.text|linebreaksbr }}</span>
       </li>
       {% for comment in post.comments.all %}
-      <li class="r" >
+      <li class="r" id="comments{{comment.pk}}" >
         <a class="nontranslate" title="{{comment.author}}" href="{% url 'user_profile' userp=comment.author%}">{{ comment.author }}</a>
         <span>{{ comment.text }}</span>
         {% if user.is_authenticated and comment.author == user.username%}
-            <a class="btn delcbut" data-toggle="tooltip" title="Удалить коментарий" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></a>
+            <button class="delcbut" type="button" data-toggle="tooltip"  title="Удалить коментарий" id="commentdel{{comment.pk}}"
+             data-postpk="{{post.pk}}" data-commentpk="{{comment.pk}}">
+             <span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></button>
         {% endif %}
       </li>
       {% empty %}
@@ -39,11 +40,18 @@
       </time>
       <br></br>
       {% if user.is_authenticated %}
-           <a class="btn btn-default " href="{% url 'add_comment_to_post' pk=post.pk %}">Добавить комментарий</a>
+      <form id="commentform{{post.pk}}" class="commentform" method="post" action="/post/comment/" data-postpk={{post.pk}}>
+        {% csrf_token %}
+        <input type="text" class="commentinput" id="commeninput{{post.pk}}" name="commenttext" value="" placeholder="Напишите коментарий..." />
+        <br />
+        <input type="submit" style="display: none" /></input>
+      </form>
       {% endif %}
     </ul>
   </div>
 </div>
 
 {% endfor %}
+
+
 {% endblock %}

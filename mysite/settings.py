@@ -2,7 +2,9 @@ import os
 import cloudinary
 import cloudinary.uploader
 import cloudinary.api
-
+import json
+import urllib3
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -88,8 +90,12 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'kg_db',
+        'USER' : 'admin',
+        'PASSWORD' : '31011997',
+        'HOST' : '127.0.0.1',
+        'PORT' : '5432',
     }
 }
 
