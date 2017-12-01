@@ -41,10 +41,15 @@ INSTALLED_APPS = [
     'django.contrib.humanize',
     'cloudinary_storage',
     'cloudinary',
+    'rest_framework',
     'blog',
 ]
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAdminUser',
+    ],
+}
 
 CLOUDINARY_STORAGE = {
     'CLOUD_NAME': 'dwdm42giw',

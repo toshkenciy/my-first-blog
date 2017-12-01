@@ -20,7 +20,8 @@ from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
 from cloudinary.api import delete_resources_by_tag, resources_by_tag
 from django.views.generic import RedirectView
-
+from .serializers import UserSerializer, PostSerializer, CommentSerializer, ProfileSerializer
+from rest_framework import viewsets
 
 @login_required
 def post_list(request):
@@ -86,11 +87,6 @@ def post_edit(request, pk):
     else:
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
-
-@login_required
-def post_draft_list(request):
-    posts = Post.objects.filter(published_date__isnull=True).order_by('created_date')
-    return render(request, 'blog/post_draft_list.html', {'posts': posts})
 
 @login_required
 def post_publish(request, pk):
@@ -196,7 +192,6 @@ def signup(request):
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
-
             user.save()
             current_site = get_current_site(request)
             message = render_to_string('blog/acc_active_email.html', {
@@ -205,11 +200,11 @@ def signup(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Activate your kilogramm account.'
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(mail_subject, message, to=[to_email])
             email.send()
-            return HttpResponse('Please confirm your email address to complete the registration')
+            return HttpResponse('Confirm your email! We send you a message.')
     else:
         form = SignupForm()
 
@@ -223,6 +218,7 @@ def activate(request, uidb64, token):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
+        user.profile.profpic.url = "http://res.cloudinary.com/dwdm42giw/image/upload/v1511185812/default_profile_picture_kocxfz.png"
         user.save()
         login(request, user)
         return redirect('post_list')
@@ -237,3 +233,17 @@ def comment_remove(request):
     comment = get_object_or_404(Comment, pk=pk)
     comment.delete()
     return HttpResponse()
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all().order_by('-published_date')
+    serializer_class = PostSerializer
+class CommentViewSet(viewsets.ModelViewSet):
+    queryset = Comment.objects.all().order_by('-created_date')
+    serializer_class = CommentSerializer
+class ProfileViewSet(viewsets.ModelViewSet):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer

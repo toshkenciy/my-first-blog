@@ -47,9 +47,14 @@ h1, h2, h3, h4 {
     width: 100%;
 }
 
+.searchline{
+  width: 100%;
+  border-bottom: 1px groove #DCDCDC;
+  border-radius: 0;
+  padding: 5px;
+}
 
-
-.post, .postedit {
+.post {
      border-radius: 0;
      margin-top: 50px;
      margin-bottom: 50px;
@@ -62,7 +67,18 @@ h1, h2, h3, h4 {
      overflow: hidden;
      display: block;
 }
-
+.postedit {
+     padding: 5px;
+     margin-left: 20%;
+     border-radius: 0;
+     border: 1px #DCDCDC;
+     border-style: groove;
+     position: relative;
+     width: 55%;
+     background: White;
+     overflow: hidden;
+     display: block;
+}
 .pubhead{
      text-align: center;
      margin-left: 40%;

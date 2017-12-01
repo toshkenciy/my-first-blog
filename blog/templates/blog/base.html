@@ -7,13 +7,13 @@
 <head>
   <title>Kilogramm</title>
 
-  <!-- Latest compiled and minified CSS -->
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<!-- jQuery library -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<!-- Latest compiled JavaScript -->
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
   <link href="https://fonts.googleapis.com/css?family=Lobster&subset=latin,cyrillic" rel="stylesheet" type="text/css">
   <link rel="stylesheet" href="{% static 'css/blog.css' %}">
   <script>
@@ -54,7 +54,6 @@
       var postpk, commenttext, lastcom;
       postpk = $(this).attr('data-postpk');
       commenttext = $(this).find('.commentinput').val();
-      lastcom = $('.ul').find('.r').last();
       console.log(postpk, commenttext);
       $.ajax({
           headers: { "X-CSRFToken": getCookie("csrftoken") },
@@ -63,9 +62,9 @@
           dataType: 'JSON',
           data: { pk: postpk, the_comment: commenttext},
           success: function (data) {
-              $(this).closest('form').find("input[type=text], textarea").val("");
-              $('.r').last().after("<t><strong>"+data.author+"</strong>  <t> "+data.text+"</t></t></br>"
-            );
+              $("#commentform"+postpk).find("input[type=text], textarea").val("");
+              $('#post'+postpk).append($('<li>').attr('style','list-style: none; margin-left: -5%; padding-bottom: 2%;').append(
+                "<strong>"+data.author+"</strong>  <t> "+data.text+"</t></br>"));
           },
     });
   });
@@ -90,23 +89,16 @@
         <div class="navbar-header">
           <a class="navbar-brand" href="/">Kilogramm</a>
         </div>
-        <ul class="middlesearch navbar-nav">
-        </ul>
-          <div class="dropdown" >
+          <div class="dropdown" style="margin-left: 10%; margin-top: 0.8%;" >
             <input class="form-control" id="myInput" type="text" placeholder="Поиск"  data-toggle="dropdown">
               </input>
-              <ul class="dropdown-menu" style="max-height: 160px; overflow-y: auto; width: 200px; min-height: 40px;">
-                <div class="table-responsive">
-                  <table class="table table-hover table-responsive" >
-                    <tbody>
+              <ul class="dropdown-menu" style="max-height: 160px; overflow-y: auto; width: 220px; min-height: 40px;">
                       {% for listuser in users%}
-                      <tr>
-                        <td><a href="{% url 'user_profile' userp=listuser.username%}"><li><img src=" {{ listuser.profile.profpic.url }} " class="img-circle" height="25" width="25"> <strong>{{listuser.username}}</li></strong> </a></td>
-                      </tr>
+                      <a href="{% url 'user_profile' userp=listuser.username%}" >  <li class="searchline">
+                        <img src=" {{ listuser.profile.profpic.url }} " class="img-circle" style="height:30px; width:30px;  margin-right: 3%;">
+                         <strong>{{listuser.username}}</li></strong> </a>
+
                       {% endfor %}
-                    </tbody>
-                  </table>
-                </div>
               </ul>
             </div>
 

@@ -6,9 +6,10 @@
 {% for post in posts %}
 <div class="col-md-7">
   <div class="wel">
-    <strong class="posttopline"><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35">  <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
+    <strong class="posttopline"><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35"> 
+       <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
     <h1><a href="{% url 'post_detail' pk=post.pk %}"><img src=" {{ post.postpic.url }} " class="img-responsive postpic"   ></a></h1>
-    <ul>
+    <ul id="post{{post.pk}}">
       {% if user in post.likedone.all %}
         <button class="likebut" type="button" data-postpk="{{post.pk}}">
         <span class="glyphicon glyphicon-heart" style="font-size:2em;"></span></button>
@@ -35,18 +36,21 @@
       {% empty %}
           <p class="nocoms">Комментариев пока нет.</p>
       {% endfor %}
-      <time class="date" datetime="{{post.published_date}}" title="{{post.published_date}}">
-        {{ post.published_date|naturaltime }}
-      </time>
-      <br></br>
-      {% if user.is_authenticated %}
-      <form id="commentform{{post.pk}}" class="commentform" method="post" action="/post/comment/" data-postpk={{post.pk}}>
-        {% csrf_token %}
-        <input type="text" class="commentinput" id="commeninput{{post.pk}}" name="commenttext" value="" placeholder="Напишите коментарий..." />
-        <br />
-        <input type="submit" style="display: none" /></input>
-      </form>
-      {% endif %}
+
+    </ul>
+    <ul>
+    <time class="date" datetime="{{post.published_date}}" title="{{post.published_date}}">
+      {{ post.published_date|naturaltime }}
+    </time>
+    <br></br>
+    {% if user.is_authenticated %}
+    <form id="commentform{{post.pk}}" class="commentform" method="post" action="/post/comment/" data-postpk={{post.pk}}>
+      {% csrf_token %}
+      <input type="text" class="commentinput" id="commeninput{{post.pk}}" name="commenttext" value="" placeholder="Напишите коментарий..." />
+      <br />
+      <input type="submit" style="display: none" /></input>
+    </form>
+    {% endif %}
     </ul>
   </div>
 </div>

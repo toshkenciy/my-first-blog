@@ -16,6 +16,21 @@
       class="img-circle" width="175" height="175"></p>
   {% endif %}
     </div>
+  <div id="actionmodal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title" style="text-align: center;">Настройки пользователя</h4>
+        </div>
+        <div class="modal-body">
+            <a class="btn btn-default" href="{% url 'user_edit' %}" style="width: 100%;">Изменить параметры пользователя</a></br>
+            <a class="btn btn-default" href="{% url 'logout' %}" style="width: 100%;">Выйти из учетной записи</a>
+        </div>
+      </div>
+    </div>
+  </div>
   <div id="avatarmodal" class="modal fade" role="dialog">
     <div class="modal-dialog">
       <!-- Modal content-->
@@ -136,8 +151,7 @@
       {% endif %}
   {% endif %}
   {% if request.user == prof_user %}
-    <a data-toggle="tooltip" title="Настройки профиля" href="{% url 'user_edit' %}"><span class="glyphicon glyphicon-cog"style="font-size:1.5em;"></span></a>
-    <a data-toggle="tooltip" title="Выйти из учетной записи" href="{% url 'logout' %}"><span class="glyphicon glyphicon-log-out"style="font-size:1.5em;"></span></a>
+    <a data-toggle="modal" title="Настройки профиля" href="#actionmodal"><span class="glyphicon glyphicon-cog"style="font-size:1.5em;"></span></a>
     <br></br>
   {%endif%}
   <p class="infoline"><strong>{{posts.count}}</strong> публикаций

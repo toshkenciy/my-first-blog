@@ -49,12 +49,14 @@
     </div>
     <hr>
 {% for comment in post.comments.all %}
-<div class="comment">
+<div class="comment" id="comments{{comment.pk}}">
 
   <a class="nontranslate" title="{{comment.author}}" href="{% url 'user_profile' userp=comment.author%}">{{ comment.author }}</a>
   <span>{{ comment.text }}</span>
   {% if user.is_authenticated and comment.author == user.username%}
-      <a class="btn delcbut" data-toggle="tooltip" title="Удалить коментарий" href="{% url 'comment_remove' pk=comment.pk %}"><span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></a>
+       <button class="delcbut" type="button" data-toggle="tooltip"  title="Удалить коментарий" id="commentdel{{comment.pk}}"
+       data-postpk="{{post.pk}}" data-commentpk="{{comment.pk}}">
+       <span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></button>
   {% endif %}
 </div>
 {% empty %}
