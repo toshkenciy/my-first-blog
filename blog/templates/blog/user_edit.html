@@ -7,8 +7,8 @@
     <div class = "user_edit">
     <form method="POST" class="post-form" enctype="multipart/form-data" >{% csrf_token %}
         <table>
-        <tr>
-            <td>Изменить изображение профиля</td>
+        <tr >
+            <td >Изменить изображение профиля</td>
             <td>{{ form.image }}</td>
         </tr>
         <tr>
@@ -21,7 +21,7 @@
         </tr>
         </table>
 
-        <button type="submit" class="btn btn-default">Отправить</button>
+        <button  type="submit" class="btn btn-default">Отправить</button>
     </form>
     </div>
 {% endblock %}

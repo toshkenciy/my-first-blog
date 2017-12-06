@@ -2,72 +2,97 @@
 {% load humanize %}
 {% block content %}
 
-<div class="col-md-1">
+<div class="col-md-2">
 </div>
 
-<div class="col-md-8 post">
-      <div class="col-sm-8 piccol">
-          <h1><img src=" {{ post.postpic.url }} " class="img-responsive postpic"   ></h1>
-      </div>
+<div class="col-md-9">
+  <div class="post">
+    <div class="postdetpicline">
+      <h1><a><img src=" {{ post.postpic.url }} " class="img-responsive postdetpic"   ></a></h1>
+    </div>
 
-        <div class="col-md-4">
-        <div class="name">
-        <strong><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35">  <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
+    <div class="postdetright">
+      <div class="name">
+      </br>
+      <strong><img src=" {{ post.author.profile.profpic.url }} " class="img-circle" height="35" width="35">  <a title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a></strong >
         {% if post.author != user and user.is_authenticated %}
-            {% if post.author not in user.profile.subscribes.all%}
-              </br>
-              <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=post.author %}">Подписаться</a>
-            {% else %}
-              </br>
-              <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=post.author %}">Отписаться</a>
-            {% endif %}
+        {% if post.author not in user.profile.subscribes.all%}
+        <a class="btn btn-info" href="{% url 'subscribe_to_user' targetuser=post.author %}">Подписаться</a>
+        {% else %}
+        <a class="btn btn-danger" href="{% url 'unsubscribe_to_user' targetuser=post.author %}">Отписаться</a>
         {% endif %}
-       </div>
-        {% if user.is_authenticated %}
-             {% if post.author == user or user.is_superuser%}
-             <div>
-                 <a class="btn btn-default" href="{% url 'post_edit' pk=post.pk %}"><span class="glyphicon glyphicon-pencil"></span></a>
-                 <a class="btn btn-default" href="{% url 'post_remove' pk=post.pk %}"><span class="glyphicon glyphicon-remove"></span></a>
-             </div>
-             {% endif %}
-             {% if user in post.likedone.all %}
-               <button class="likebut" type="button" data-postpk="{{post.pk}}">
-               <span class="glyphicon glyphicon-heart" style="font-size:2em;"></span></button>
-             {% else %}
-               <button class="likebut" type="button" data-postpk="{{post.pk}}">
-               <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></button>
-             {% endif %}
-             </br>
-             <t><strong class="likesdone" id="{{post.pk}}">{{ post.likedone.count }} </strong><strong> отметок "Нравится"</strong></t>
         {% endif %}
-        <br></br>
+      </div>
+      <br></br>
+
+
+      <div class="commentsection" id="post{{post.pk}}">
         <t>
           <a class="nontranslate" title="{{post.author}}" href="{% url 'user_profile' userp=post.author.username%}">{{ post.author }}</a>
           <span>{{ post.text|linebreaksbr }}</span>
         </t>
-        <br></br>
+        {% for comment in post.comments.all %}
+        <div class="commentdet" id="comments{{comment.pk}}">
+
+          <a class="nontranslate" title="{{comment.author}}" href="{% url 'user_profile' userp=comment.author%}">{{ comment.author }}</a>
+          <span>{{ comment.text }}</span>
+          {% if user.is_authenticated and comment.author == user.username%}
+          <button class="delcbut" type="button" data-toggle="tooltip"  title="Удалить коментарий" id="commentdel{{comment.pk}}"
+          data-postpk="{{post.pk}}" data-commentpk="{{comment.pk}}">
+          <span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></button>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      <div class="posdetcontrol">
+        <div>
+        {% if user in post.likedone.all %}
+        <button class="likebutdet" type="button" data-postpk="{{post.pk}}">
+          <span class="glyphicon glyphicon-heart" style="font-size:2em;"></span></button>
+          {% else %}
+          <button class="likebutdet" type="button" data-postpk="{{post.pk}}">
+            <span class="glyphicon glyphicon-heart-empty" style="font-size:2em;"></span></button>
+            {% endif %}
+            {% if post.author == user or user.is_superuser%}
+
+              <a class="postbutedit" type="button" data-toggle="tooltip"  title="Редактировать пост" href="{% url 'post_edit' pk=post.pk %}">
+                <span class="glyphicon glyphicon-pencil" style="font-size:2em;"></span></a>
+              <a class="postbutedit" type="button" data-toggle="tooltip"  title="Удалить пост" href="{% url 'post_remove' pk=post.pk %}">
+                <span class="glyphicon glyphicon-remove" style="font-size:2em;"></span></a>
+            </div>
+            {% endif %}
+          </br>
+          <t><strong class="likesdonedet" id="{{post.pk}}">{{ post.likedone.count }} </strong><strong> отметок "Нравится"</strong></t>
+          <br></br>
+          <time class="date" style="margin-left:10px; "datetime="{{post.published_date}}" title="{{post.published_date}}">
+            {{ post.published_date|naturaltime }}
+          </time>
+          <br></br>
+          {% if user.is_authenticated %}
+          <form id="commentform{{post.pk}}" class="commentform" method="post" action="/post/comment/" data-postpk={{post.pk}}>
+            {% csrf_token %}
+            <input type="text" class="commentdetinput" id="commeninput{{post.pk}}" name="commenttext" value="" placeholder="Напишите коментарий..." />
+            <br />
+            <input type="submit" style="display: none" /></input>
+          </form>
+          {% endif %}
+        </div>
+      </div>
     </div>
-    <hr>
-{% for comment in post.comments.all %}
-<div class="comment" id="comments{{comment.pk}}">
+  </div>
+  <div class="col-md-1">
+  </div>
+  <script>
+  $(document).ready(function() {
+    $(" .postdetright").css("height", $(".postdetpic").height() - 20);
+    $(" .commentsection").css("max-height", $(".postdetright").height() - $(".name").height() - $(".posdetcontrol").height());
+    $(" .commentsection").css("height", $(".postdetright").height() - $(".name").height() - $(".posdetcontrol").height());
 
-  <a class="nontranslate" title="{{comment.author}}" href="{% url 'user_profile' userp=comment.author%}">{{ comment.author }}</a>
-  <span>{{ comment.text }}</span>
-  {% if user.is_authenticated and comment.author == user.username%}
-       <button class="delcbut" type="button" data-toggle="tooltip"  title="Удалить коментарий" id="commentdel{{comment.pk}}"
-       data-postpk="{{post.pk}}" data-commentpk="{{comment.pk}}">
-       <span class="glyphicon glyphicon-remove" style="color:grey;font-size:0.7em;"></span></button>
-  {% endif %}
-</div>
-{% empty %}
-    <p>Комментариев пока нет.</p>
-{% endfor %}
-<br></br>
-<time class="date" style="margin-left:10px; "datetime="{{post.published_date}}" title="{{post.published_date}}">
-  {{ post.published_date|naturaltime }}
-</time>
-
-</div>
-<div class="col-md-1">
-</div>
-{% endblock %}
+  });
+  $( window ).resize(function() {
+    $(" .postdetright").css("height", $(".postdetpic").height() - 20);
+    $(" .commentsection").css("max-height", $(".postdetright").height() - $(".name").height() - $(".posdetcontrol").height() +20);
+    $(" .commentsection").css("height", $(".postdetright").height() - $(".name").height() - $(".posdetcontrol").height()+20);
+  });
+  </script>
+  {% endblock %}

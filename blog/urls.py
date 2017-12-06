@@ -27,4 +27,5 @@ urlpatterns = [
     url(r'^profiles/unsubscribe/(?P<targetuser>\S+)/$', views.unsubscribe_to_user, name='unsubscribe_to_user'),
     url(r'^profiles/(?P<userp>\S+)/$', views.user_profile, name='user_profile'),
     url(r'^user_edit/$', views.user_edit, name='user_edit'),
+    url(r'^password/$', views.change_password, name='change_password'),
 ]

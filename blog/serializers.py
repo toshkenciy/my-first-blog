@@ -11,16 +11,16 @@ class UserSerializer(serializers.HyperlinkedModelSerializer):
 class PostSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Post
-        fields = ('author', 'text', 'postpic','created_date', 'likedone')
+        fields = ('pk','author', 'text', 'postpic','created_date', 'likedone')
 
 
 class CommentSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Comment
-        fields = ('post', 'author', 'text', 'created_date')
+        fields = ('pk','post', 'author', 'text', 'created_date')
 
 
 class ProfileSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = Profile
-        fields = ('user', 'profpic', 'subscribers','subscribes', 'description')
+        fields = ('pk','user', 'profpic', 'subscribers','subscribes', 'description')

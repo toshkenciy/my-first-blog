@@ -26,6 +26,7 @@
         </div>
         <div class="modal-body">
             <a class="btn btn-default" href="{% url 'user_edit' %}" style="width: 100%;">Изменить параметры пользователя</a></br>
+            <a class="btn btn-default" href="{% url 'change_password' %}" style="width: 100%;">Изменить пароль учетной записи</a>
             <a class="btn btn-default" href="{% url 'logout' %}" style="width: 100%;">Выйти из учетной записи</a>
         </div>
       </div>
@@ -66,11 +67,11 @@
               </thead>
               <tbody>
                 {% if not prof_user.profile.subscribes %}
-                    <t>Подписок нет.</t>
+                    <tr>Подписок нет.</tr>
                 {% else %}
                     {% for subscribes in prof_user.profile.subscribes.all %}
                     <tr>
-                      <td scope="row"> <a href="{% url 'user_profile' userp=subscribes.username%}"><img src=" {{ subscribes.profile.profpic.url }} " class="img-circle" height="35" width="35"> </a></td>
+                      <td> <a href="{% url 'user_profile' userp=subscribes.username%}"><img src=" {{ subscribes.profile.profpic.url }} " class="img-circle" height="35" width="35"> </a></td>
                       <td><a href="{% url 'user_profile' userp=subscribes.username%}"><strong>{{subscribes.username}}</strong> </a></td>
                       <td>
                         {% if subscribes != user and user.is_authenticated %}

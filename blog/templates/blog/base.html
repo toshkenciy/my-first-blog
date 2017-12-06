@@ -18,7 +18,7 @@
   <link rel="stylesheet" href="{% static 'css/blog.css' %}">
   <script>
   $(document).ready(function(){
-    $('.likebut').on("click", function(){
+    $('.likebut, .likebutdet').on("click", function(){
       var postpk;
       postpk = $(this).attr("data-postpk");
       $("span", this).toggleClass("glyphicon-heart glyphicon-heart-empty");
@@ -53,7 +53,7 @@
       event.preventDefault();
       var postpk, commenttext, lastcom;
       postpk = $(this).attr('data-postpk');
-      commenttext = $(this).find('.commentinput').val();
+      commenttext = $(this).find('.commentinput, .commentdetinput').val();
       console.log(postpk, commenttext);
       $.ajax({
           headers: { "X-CSRFToken": getCookie("csrftoken") },
@@ -62,17 +62,15 @@
           dataType: 'JSON',
           data: { pk: postpk, the_comment: commenttext},
           success: function (data) {
+
+                $('#post'+postpk).append($('<li>').attr('style','list-style: none; padding-bottom: 2%;').append(
+                  "<strong>"+data.author+"</strong>  <t> "+data.text+"</t></br>"));
               $("#commentform"+postpk).find("input[type=text], textarea").val("");
-              $('#post'+postpk).append($('<li>').attr('style','list-style: none; margin-left: -5%; padding-bottom: 2%;').append(
-                "<strong>"+data.author+"</strong>  <t> "+data.text+"</t></br>"));
           },
     });
   });
 
 });
-  </script>
-
-  <script>
   $(document).ready(function(){
     $("#myInput").on("keyup", function() {
       var value = $(this).val().toLowerCase();
@@ -84,7 +82,7 @@
   </script>
 </head>
 <body>
-    <nav class="navbar" >
+    <nav class="navbar " >
       <div class="container-fluid">
         <div class="navbar-header">
           <a class="navbar-brand" href="/">Kilogramm</a>
@@ -93,7 +91,7 @@
             <input class="form-control" id="myInput" type="text" placeholder="Поиск"  data-toggle="dropdown">
               </input>
               <ul class="dropdown-menu" style="max-height: 160px; overflow-y: auto; width: 220px; min-height: 40px;">
-                      {% for listuser in users%}
+                      {% for listuser in userlist%}
                       <a href="{% url 'user_profile' userp=listuser.username%}" >  <li class="searchline">
                         <img src=" {{ listuser.profile.profpic.url }} " class="img-circle" style="height:30px; width:30px;  margin-right: 3%;">
                          <strong>{{listuser.username}}</li></strong> </a>
@@ -104,12 +102,17 @@
 
           <ul class="nav navbar-nav navbar-right">
           {% if user.is_authenticated %}
+                <li><strong ><img src=" {{ user.profile.profpic.url }} " class="img-circle" height="45" width="45" >
+                   <a title="{{user}}" href="{% url 'user_profile' userp=user.username%}">{{ user }} </a></strong ></li>
+          {% endif %}
+          {% if user.is_authenticated %}
             <li><a data-toggle="tooltip" title="Профиль" href="{% url 'user_profile' userp=user.username %}"><span class="glyphicon glyphicon-user"style="font-size:2em;"></span></a></li>
             <li><a data-toggle="tooltip" title="Добавить пост" href="{% url 'post_new' %}"><span class="glyphicon glyphicon-plus"style="font-size:2em;"></span></a></li>
           {% else %}
             <li><a data-toggle="tooltip" title="Зарегистрироваться" href="{% url 'signup' %}"><span class="glyphicon glyphicon-pencil"style="font-size:2em;"></span></a></li>
             <li><a data-toggle="tooltip" title="Войти" href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"style="font-size:2em;"></span></a></li>
           {% endif %}
+
           </ul>
       </div>
     </nav>

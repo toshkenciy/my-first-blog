@@ -1,8 +1,9 @@
+# -*- coding: utf-8 -*-
 import os, sys
 from django.utils import timezone
 from .models import Post, Comment, Profile
 import json
-from django.contrib.messages import constants as messages
+from django.contrib import  messages
 from django.contrib.sites.shortcuts import get_current_site
 from django.shortcuts import render, get_object_or_404, redirect
 from .forms import PostForm, CommentForm, SignupForm, ImageUploadForm, UserEditForm
@@ -15,9 +16,10 @@ from .tokens import account_activation_token
 from django.contrib.auth.models import User
 from django.template import RequestContext
 from django.core.mail import EmailMessage
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login, authenticate, update_session_auth_hash
 from cloudinary.uploader import upload
 from cloudinary.utils import cloudinary_url
+from django.contrib.auth.forms import PasswordChangeForm
 from cloudinary.api import delete_resources_by_tag, resources_by_tag
 from django.views.generic import RedirectView
 from .serializers import UserSerializer, PostSerializer, CommentSerializer, ProfileSerializer
@@ -55,6 +57,7 @@ def post_new(request):
 
 @login_required
 def user_edit(request):
+    user = request.user;
     if request.method == 'POST':
         form = UserEditForm(request.POST,  request.FILES)
         if form.is_valid():
@@ -78,10 +81,12 @@ def user_edit(request):
 def post_edit(request, pk):
     post = get_object_or_404(Post, pk=pk)
     if request.method == "POST":
-        form = PostForm(request.POST, instance=post)
+        form = PostForm(request.POST, request.FILES, instance=post)
         if form.is_valid():
             post = form.save(commit=False)
             post.author = request.user
+            if form.cleaned_data['image']:
+               post.postpic = form.cleaned_data['image']
             post.save()
             return redirect('post_detail', pk=post.pk)
     else:
@@ -184,7 +189,6 @@ def add_comment_to_post(request):
             json.dumps(response_data),
             content_type="application/json",
         )
-    return render(request, 'blog/post_list.html', {'posts': posts})
 
 def signup(request):
     if request.method == 'POST':
@@ -210,6 +214,21 @@ def signup(request):
 
     return render(request, 'blog/signup.html', {'form': form})
 
+@login_required
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)  # Important!
+            messages.success(request, 'Ваш пароль был успешно изменен!')
+            return redirect('change_password')
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'blog/change_password.html', {
+        'form': form
+    })
+
 def activate(request, uidb64, token):
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
@@ -218,7 +237,6 @@ def activate(request, uidb64, token):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
-        user.profile.profpic.url = "http://res.cloudinary.com/dwdm42giw/image/upload/v1511185812/default_profile_picture_kocxfz.png"
         user.save()
         login(request, user)
         return redirect('post_list')
