@@ -105,11 +105,15 @@
                    <a title="{{user}}" href="{% url 'user_profile' userp=user.username%}">{{ user }} </a></strong ></li>
           {% endif %}
           {% if user.is_authenticated %}
-            <li><a data-toggle="tooltip" title="Профиль" href="{% url 'user_profile' userp=user.username %}"><span class="glyphicon glyphicon-user"style="font-size:2em;"></span></a></li>
-            <li><a data-toggle="tooltip" title="Добавить пост" href="{% url 'post_new' %}"><span class="glyphicon glyphicon-plus"style="font-size:2em;"></span></a></li>
+            <li><a data-toggle="tooltip" title="Профиль" style="  background-color: transparent; border: none; cursor: pointer; padding: 8px;" href="{% url 'user_profile' userp=user.username %}">
+              <span class="glyphicon glyphicon-user"style="font-size:2em;"></span></a></li>
+            <li><a data-toggle="tooltip" title="Добавить пост" style="  background-color: transparent; border: none; cursor: pointer; padding: 8px;" href="{% url 'post_new' %}">
+              <span class="glyphicon glyphicon-plus"style="font-size:2em;"></span></a></li>
           {% else %}
-            <li><a data-toggle="tooltip" title="Зарегистрироваться" href="{% url 'signup' %}"><span class="glyphicon glyphicon-pencil"style="font-size:2em;"></span></a></li>
-            <li><a data-toggle="tooltip" title="Войти" href="{% url 'login' %}"><span class="glyphicon glyphicon-log-in"style="font-size:2em;"></span></a></li>
+            <li><a data-toggle="tooltip" title="Зарегистрироваться" style="  background-color: transparent; border: none; cursor: pointer; padding: 8px;" href="{% url 'signup' %}">
+              <span class="glyphicon glyphicon-pencil"style="font-size:2em;"></span></a></li>
+            <li><a data-toggle="tooltip" title="Войти" style="  background-color: transparent; border: none; cursor: pointer; padding: 8px;" href="{% url 'login' %}">
+              <span class="glyphicon glyphicon-log-in"style="font-size:2em;"></span></a></li>
           {% endif %}
 
           </ul>
