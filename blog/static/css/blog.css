@@ -224,7 +224,6 @@ h1, h2, h3, h4 {
 .wel{
      border-radius: 0;
      margin-top: 50px;
-     margin-left: 30%;
      border: 1px #DCDCDC;
      border-style: groove;
      position: relative;
@@ -234,8 +233,8 @@ h1, h2, h3, h4 {
      overflow: hidden;
      display: block;
 }
-.col-md-7:first-child{
-  margin-top: -40px;
+.wel:first-child{
+  margin-top: 35px;
 }
 .delcbut{
   position:relative;

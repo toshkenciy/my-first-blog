@@ -5,14 +5,14 @@ from django.conf.urls.static import static
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
-router.register(r'posts', views.PostViewSet)
-router.register(r'comments', views.CommentViewSet)
-router.register(r'profiles', views.ProfileViewSet)
+router.register(r'user', views.UserViewSet)
+router.register(r'post', views.PostViewSet)
+router.register(r'comment', views.CommentViewSet)
+router.register(r'profile', views.ProfileViewSet)
 
 
 urlpatterns = [
-    url(r'^rest_api/', include(router.urls)),
+    url(r'^api/', include(router.urls)),
     url(r'^$', views.post_list, name='post_list'),
     url(r'^post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
     url(r'^post/new/$', views.post_new, name='post_new'),
