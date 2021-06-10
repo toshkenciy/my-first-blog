@@ -4,7 +4,7 @@ chardet==3.0.4
 cloudinary==1.8.0
 confusable-homoglyphs==2.0.2
 cryptography==1.9
-Django==1.11.7
+Django==2.2.24
 django-allauth==0.34.0
 django-bootstrap3==9.1.0
 django-cloudinary-storage==0.2.2
